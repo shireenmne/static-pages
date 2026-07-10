@@ -60,6 +60,14 @@
       textSize: styleVariants.textSize,
     },
   });
+  const generateYearRange = () => {
+    const currentYear = new Date().getFullYear();
+    const years: number[] = [];
+    for (let y = currentYear; y >= 1950; y--) {
+      years.push(y);
+    }
+    return years;
+  };
 </script>
 
 <div class={cleanClass('flex w-full flex-col gap-1', className)}>
@@ -130,7 +138,32 @@
               <DatePicker.PrevButton class={buttonStyles()}>
                 <Icon icon={mdiChevronLeft} size="1.25rem" />
               </DatePicker.PrevButton>
-              <DatePicker.Heading class="text-sm font-semibold" />
+              {@const current = months[0].value}
+              <div class="flex items-center gap-1 text-sm font-semibold">
+                  <span>
+                      {
+                        new Intl.DateTimeFormat(getLocale(), { month: "long" }).format(
+                          new Date(2000, current.month - 1)
+                        )
+                      }
+                  </span>
+                  <select
+                      value={current.year}
+                      onchange={(event) => {
+                          const selectedYear = Number(
+                            (event.target as HTMLSelectElement).value
+                          );
+                          date = current.set({year: selectedYear});
+                      }}
+                      class="bg-transparent border-none font-semibold cursor-pointer outline-none hover:bg-light-200 hover:dark:bg-light-300 rounded-lg"
+                  >
+                    {#each generateYearRange() as year (year)}
+                      <option value={year}>
+                        {year}
+                      </option>
+                    {/each}
+                </select>
+              </div>
               <DatePicker.NextButton class={buttonStyles()}>
                 <Icon icon={mdiChevronRight} size="1.25rem" />
               </DatePicker.NextButton>
